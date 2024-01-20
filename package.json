@@ -1,0 +1,32 @@
+{
+  "name": "phantomcms",
+  "version": "1.0.0",
+  "description": "PhantomCMS is provider of on page text editing functionality for React components.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Junkiez/PhantomCMS.git"
+  },
+  "files": [
+    "index.js",
+    "LICENCE",
+    "README.md"
+  ],
+  "keywords": [
+    "cms",
+    "react",
+    "kv",
+    "content",
+    "edit",
+    "database"
+  ],
+  "author": "KAZE",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Junkiez/PhantomCMS/issues"
+  },
+  "homepage": "https://github.com/Junkiez/PhantomCMS#readme",
+  "dependencies": {
+    "react": "latest"
+  }
+}
