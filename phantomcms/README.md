@@ -94,20 +94,11 @@ In production, you can use direct access to content by:
 
 ```jsx
 export default async function Home() {
-    // if use nextjs (highly recommended
-    const data = await fc.getStaticContent('Landwind:home');
+    // if use nextjs (highly recommended)
+    const data = await fc.getContent('sitename:homepage');
 
     // in common react
-    const [data, setData] = useState(null);
-    useEffect(() => {
-        (async ()=>{
-            try {
-                setData(await fc.getStaticContent('Landwind:home'));
-            } catch (e) {
-                ...
-            }
-        })();
-    },[])
+    const {data} = fc.useContent('sitename:homepage');
     return !data ? <Loading/> : <>...</>;
 }
 ```

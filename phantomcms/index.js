@@ -2,8 +2,24 @@ import {useEffect, useState, useRef} from "react";
 
 export function PhantomCMS(storage, db) {
 
-    this.getStaticContent = async function (key) {
+    this.getContent = async function (key) {
         return await storage[key];
+    }
+
+    this.useContent = function (key) {
+        const [data, setData] = useState(null);
+
+        useEffect(() => {
+            (async ()=>{
+                try {
+                    setData(await storage.getItem(key));
+                } catch (e) {
+                    console.error(e);
+                }
+            })();
+        },[])
+
+        return {data}
     }
 
     function areObjectsEqual(obj1, obj2) {
