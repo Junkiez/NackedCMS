@@ -19,7 +19,7 @@ export function PhantomCMS(storage, db) {
             })();
         },[])
 
-        return {data}
+        return data;
     }
 
     function areObjectsEqual(obj1, obj2) {
@@ -75,8 +75,8 @@ export function PhantomCMS(storage, db) {
         current[keys[keys.length - 1]] = newValue;
     }
 
-    this.useFantomEdit = function (key) {
-        const [editable, setEditable] = useState(false);
+    this.useFantomEdit = function (key, defaultEdit=false) {
+        const [editable, setEditable] = useState(defaultEdit);
         const [content, setContent] = useState(null);
         const [data, setData] = useState(db[key]);
         const inJsx = useRef(null);

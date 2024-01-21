@@ -67,7 +67,7 @@ Then in your react page call hook:
 
 ```jsx
 export default function Home() {
-    const [data, editable, setEditable] = fc.useFantomEdit('sitename:homepage');
+    const [data, editable, setEditable] = fc.useFantomEdit('sitename:homepage', true);
     return (
         <>
             <h1>{data.header}</h1>
@@ -86,7 +86,7 @@ export default function Home() {
 }
 ```
 
-"data" is object of your provided content model, "editable" - boolean value to indicate edit is enabled (default: false), "setEditable" - function to enable or disable edit mode
+"data" is object of your provided content model, "editable" - boolean value to indicate edit is enabled (default: false, can be set as second param), "setEditable" - function to enable or disable edit mode
 
 When enable you can edit any connected text on page by clicking on it. Recommend to use in development to provide copywriter ability to edit content in it native visual environment.
 
@@ -98,7 +98,7 @@ export default async function Home() {
     const data = await fc.getContent('sitename:homepage');
 
     // in common react
-    const {data} = fc.useContent('sitename:homepage');
+    const data = fc.useContent('sitename:homepage');
     return !data ? <Loading/> : <>...</>;
 }
 ```
