@@ -1,6 +1,6 @@
 {
   "name": "phantomcms",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "PhantomCMS is provider of on page text editing functionality for React components.",
   "main": "index.js",
   "repository": {
@@ -15,10 +15,14 @@
   "keywords": [
     "cms",
     "react",
+    "next",
+    "headless",
     "kv",
     "content",
     "edit",
-    "database"
+    "database",
+    "unstorage",
+    "upstash"
   ],
   "author": "KAZE",
   "license": "ISC",
