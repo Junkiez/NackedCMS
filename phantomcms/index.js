@@ -79,6 +79,7 @@ export function PhantomCMS(storage, db) {
         const [editable, setEditable] = useState(defaultEdit);
         const [data, setData] = useState(db[key]);
         const inJsx = useRef(null);
+        const previousBuffer = useRef(null);
         const changeBuffer = useRef(null);
 
         useEffect(() => {
@@ -112,10 +113,12 @@ export function PhantomCMS(storage, db) {
         }
 
         const memoWrapper = () => {
-            if (inJsx.current) {
+            const current = JSON.stringify(changeBuffer.current);
+            if (inJsx.current && previousBuffer.current === current) {
                 return inJsx.current;
             }
-            return inJsx.current = addXPathToObjectValues(JSON.parse(JSON.stringify(changeBuffer.current)));
+            previousBuffer.current = current;
+            return inJsx.current = addXPathToObjectValues(JSON.parse(current));
         }
 
         useEffect(() => {
