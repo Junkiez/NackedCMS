@@ -3,7 +3,7 @@ import {useEffect, useState, useRef} from "react";
 export function PhantomCMS(storage, db) {
 
     this.getContent = async function (key) {
-        return await storage[key];
+        return await storage.getItem(key);
     }
 
     this.useContent = function (key) {
@@ -77,18 +77,18 @@ export function PhantomCMS(storage, db) {
 
     this.useFantomEdit = function (key, defaultEdit=false) {
         const [editable, setEditable] = useState(defaultEdit);
-        const [content, setContent] = useState(null);
         const [data, setData] = useState(db[key]);
         const inJsx = useRef(null);
+        const changeBuffer = useRef(null);
 
         useEffect(() => {
             (async () => {
                 const prevData = await storage.getItem(key);
                 if (prevData && areObjectsEqual(prevData, db[key])) {
                     setData(prevData);
-                    setContent(prevData);
+                    changeBuffer.current = prevData;
                 } else {
-                    setContent(db[key]);
+                    changeBuffer.current = db[key];
                 }
             })()
         }, []);
@@ -103,10 +103,8 @@ export function PhantomCMS(storage, db) {
                         addXPathToObjectValues(value, newPath);
                     } else {
                         obj[key] = <p contentEditable="plaintext-only" onBlur={e => {
-                            const clearCopy = JSON.parse(JSON.stringify(content));
-                            setValueByPath(clearCopy, newPath, e.target.innerHTML);
-                            setContent(clearCopy);
-                        }}>{getValueByPath(content, newPath)}</p>;
+                            setValueByPath(changeBuffer.current, newPath, e.target.innerHTML);
+                        }}>{getValueByPath(changeBuffer.current, newPath)}</p>;
                     }
                 }
             }
@@ -117,7 +115,7 @@ export function PhantomCMS(storage, db) {
             if (inJsx.current) {
                 return inJsx.current;
             }
-            return inJsx.current = addXPathToObjectValues(JSON.parse(JSON.stringify(content)));
+            return inJsx.current = addXPathToObjectValues(JSON.parse(JSON.stringify(changeBuffer.current)));
         }
 
         useEffect(() => {
@@ -125,9 +123,9 @@ export function PhantomCMS(storage, db) {
                 if (editable) {
                     setData(memoWrapper());
                 } else {
-                    if (content) {
-                        await storage.setItem(key, content);
-                        setData(content);
+                    if (changeBuffer.current) {
+                        await storage.setItem(key, changeBuffer.current);
+                        setData(changeBuffer.current);
                     }
                 }
             })()
