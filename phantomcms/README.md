@@ -2,38 +2,37 @@
 
 Phantom CMS is an cms which provides on page text editing functionality for React components.
 
-It bind data model to the database via provider like vercel/kv:
+It bind data model to the any database via [Unstorage](https://unstorage.unjs.io) provider:
 
 ```jsx
-import {createClient} from "@vercel/kv";
+import {createStorage} from "unstorage";
 import {PhantomCMS} from "phantomcms";
 
 const fc = new PhantomCMS(
-    createClient({
-        url: "https://<project-name>.kv.vercel-storage.com",
-        token: "<token>",
+    createStorage({
+        driver: vercelKVDriver({
+                url: "https://<project-name>.kv.vercel-storage.com",
+                token: "<token>",
+        }),
     }),
     ...
 );
 ```
 
-Or any custom client with implemented get/set methods
+Or custom client with implemented getItem/setItem methods
 
 ```jsx
+import { Redis } from "@upstash/redis";
 import {PhantomCMS} from "phantomcms";
 
 const fc = new PhantomCMS(
     {
-        get(key) {
-            return JSON.parse(
-                localStorage.getItem(key)
-            );
+        redis: Redis.fromEnv(),
+        async getItem(key) {
+            return await this.redis.get(key)
         },
-        set(key, value) {
-            localStorage.setItem(
-                key, 
-                JSON.stringify(value)
-            );
+        async setItem(key, value) {
+            return await this.redis.set(key, value)
         }
     },
     ...
@@ -87,6 +86,30 @@ export default function Home() {
 }
 ```
 
-"data" is object of your provided content model, editable - boolean value to indicate edit is enabled (defaul: false), setEditable - function to enable or disable edit mode
+"data" is object of your provided content model, "editable" - boolean value to indicate edit is enabled (default: false), "setEditable" - function to enable or disable edit mode
 
-When enable you can edit any connected text on page by clicking on it. Recommend to use in development envirement to provide copywriter ability to edit content in it visual environment but in production you should use only db where it was stored
+When enable you can edit any connected text on page by clicking on it. Recommend to use in development to provide copywriter ability to edit content in it native visual environment.
+
+In production, you can use direct access to content by:
+
+```jsx
+export default async function Home() {
+    // if use nextjs (highly recommended
+    const data = await fc.getStaticContent('Landwind:home');
+
+    // in common react
+    const [data, setData] = useState(null);
+    useEffect(() => {
+        (async ()=>{
+            try {
+                setData(await fc.getStaticContent('Landwind:home'));
+            } catch (e) {
+                ...
+            }
+        })();
+    },[])
+    return !data ? <Loading/> : <>...</>;
+}
+```
+
+I'll think about unify this by checking process.env.production variable in future versions

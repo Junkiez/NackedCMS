@@ -1,6 +1,10 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 
 export function PhantomCMS(storage, db) {
+
+    this.getStaticContent = async function (key) {
+        return await storage[key];
+    }
 
     function areObjectsEqual(obj1, obj2) {
         const keys1 = Object.keys(obj1);
@@ -59,11 +63,11 @@ export function PhantomCMS(storage, db) {
         const [editable, setEditable] = useState(false);
         const [content, setContent] = useState(null);
         const [data, setData] = useState(db[key]);
+        const inJsx = useRef(null);
 
         useEffect(() => {
             (async () => {
-                const prevData = await storage.get(key);
-                console.log(prevData);
+                const prevData = await storage.getItem(key);
                 if (prevData && areObjectsEqual(prevData, db[key])) {
                     setData(prevData);
                     setContent(prevData);
@@ -90,17 +94,23 @@ export function PhantomCMS(storage, db) {
                     }
                 }
             }
-
             return obj;
+        }
+
+        const memoWrapper = () => {
+            if (inJsx.current) {
+                return inJsx.current;
+            }
+            return inJsx.current = addXPathToObjectValues(JSON.parse(JSON.stringify(content)));
         }
 
         useEffect(() => {
             (async () => {
                 if (editable) {
-                    setData(addXPathToObjectValues(JSON.parse(JSON.stringify(content))));
+                    setData(memoWrapper());
                 } else {
                     if (content) {
-                        await storage.set(key, JSON.stringify(content));
+                        await storage.setItem(key, content);
                         setData(content);
                     }
                 }
