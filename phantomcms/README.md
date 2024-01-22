@@ -67,7 +67,7 @@ Then in your react page call hook:
 
 ```jsx
 export default function Home() {
-    const [data, editable, setEditable] = fc.useFantomEdit('sitename:homepage', true);
+    const [data, editable, setEditable] = fc.useFantomEdit('sitename:homepage', true, false);
     return (
         <>
             <h1>{data.header}</h1>
@@ -88,7 +88,48 @@ export default function Home() {
 
 "data" is object of your provided content model, "editable" - boolean value to indicate edit is enabled (default: false, can be set as second param), "setEditable" - function to enable or disable edit mode
 
-When enable you can edit any connected text on page by clicking on it. Recommend to use in development to provide copywriter ability to edit content in it native visual environment.
+third param - indicates ability to edit images:
+
+```jsx
+import {PhantomCMS,PhantomImage} from "phantomcms";
+
+const fc = new PhantomCMS(
+    provider,
+    {
+        'sitename:homepage': {
+            image: '/images/hero.png',
+            image2: 'https://images.com/hero.png',
+            ...
+        }
+    }
+);
+
+export default function Home() {
+    const [data, editable, setEditable] = fc.useFantomEdit('sitename:homepage', false, true);
+    return (
+        <>
+            ...
+            <PhantomImage src={data.image} style={{borderRadius:"100%"}} className="h-32" alt="pic"/>
+            ...
+        </>
+    )
+}
+```
+
+You also can use PhantomImage without image editing enabled.
+To handle this, editing of raw url or image path not available.
+For example:
+
+```jsx
+... 
+url: 'https://example.com' // plain text, not editor component
+path: '/images/header.png' // plain text | image editing component if enabled
+text: 'You can find it here: https://example.com' // editable
+```
+
+When enabled editing you can edit any connected text (or image) on page by clicking on it.
+Commit to storage runs on edit disable (!).
+Recommend to use in development to provide copywriter ability to edit content in it native visual environment.
 
 In production, you can use direct access to content by:
 
