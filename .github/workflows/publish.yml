@@ -13,6 +13,12 @@ jobs:
               with:
                   node-version: 12
                   registry-url: https://registry.npmjs.org
+            - name: install
+              run: npm i 
+              working-directory: phantomcms
+            - name: build
+              run: npm run build
+              working-directory: phantomcms
             - name: publish
               run: npm publish --access public
               working-directory: phantomcms
