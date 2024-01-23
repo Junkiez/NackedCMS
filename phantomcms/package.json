@@ -1,16 +1,22 @@
 {
   "name": "phantomcms",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "PhantomCMS is provider of on page text editing functionality for React components.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Junkiez/PhantomCMS.git"
   },
   "files": [
-    "index.js",
     "LICENCE",
-    "README.md"
+    "README.md",
+    "tsconfig.json",
+    "dist",
+    "src"
   ],
   "keywords": [
     "cms",
@@ -22,7 +28,9 @@
     "edit",
     "database",
     "unstorage",
-    "upstash"
+    "upstash",
+    "typescript",
+    "ssr"
   ],
   "author": "KAZE",
   "license": "ISC",
@@ -32,5 +40,8 @@
   "homepage": "https://github.com/Junkiez/PhantomCMS#readme",
   "dependencies": {
     "react": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
   }
 }

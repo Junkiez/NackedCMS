@@ -8,7 +8,7 @@ It bind data model to the any database via [Unstorage](https://unstorage.unjs.io
 import {createStorage} from "unstorage";
 import {PhantomCMS} from "phantomcms";
 
-const fc = new PhantomCMS(
+const fc = PhantomCMS(
     createStorage({
         driver: vercelKVDriver({
                 url: "https://<project-name>.kv.vercel-storage.com",
@@ -25,7 +25,7 @@ Or custom client with implemented getItem/setItem methods
 import { Redis } from "@upstash/redis";
 import {PhantomCMS} from "phantomcms";
 
-const fc = new PhantomCMS(
+const fc = PhantomCMS(
     {
         redis: Redis.fromEnv(),
         async getItem(key) {
@@ -44,7 +44,7 @@ Second argument provide your content model (with sample values):
 ```jsx
 import {PhantomCMS} from "phantomcms";
 
-const fc = new PhantomCMS(
+const fc = PhantomCMS(
     provider,
     {
         'sitename:homepage': {
@@ -66,13 +66,14 @@ const fc = new PhantomCMS(
 Then in your react page call hook:
 
 ```jsx
+"use client"; // if nextjs
 export default function Home() {
     const [data, editable, setEditable] = fc.useFantomEdit('sitename:homepage', true, false);
     return (
         <>
             <h1>{data.header}</h1>
             <nav>
-                {data.navbar.map(i=><a>{i}</a>)}
+                {data.navbar.map((i,j)=><a key={j}>{i}</a>)}
             </nav>
             <div>
                 <h2>{data.cta.header}</h2>
@@ -128,7 +129,9 @@ text: 'You can find it here: https://example.com' // editable
 ```
 
 When enabled editing you can edit any connected text (or image) on page by clicking on it.
+
 Commit to storage runs on edit disable (!).
+
 Recommend to use in development to provide copywriter ability to edit content in it native visual environment.
 
 In production, you can use direct access to content by:

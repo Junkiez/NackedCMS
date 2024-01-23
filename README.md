@@ -8,11 +8,11 @@ It bind data model to the any database via [Unstorage](https://unstorage.unjs.io
 import {createStorage} from "unstorage";
 import {PhantomCMS} from "phantomcms";
 
-const fc = new PhantomCMS(
+const fc = PhantomCMS(
     createStorage({
         driver: vercelKVDriver({
-                url: "https://<project-name>.kv.vercel-storage.com",
-                token: "<token>",
+            url: "https://<project-name>.kv.vercel-storage.com",
+            token: "<token>",
         }),
     }),
     ...
@@ -25,7 +25,7 @@ Or custom client with implemented getItem/setItem methods
 import { Redis } from "@upstash/redis";
 import {PhantomCMS} from "phantomcms";
 
-const fc = new PhantomCMS(
+const fc = PhantomCMS(
     {
         redis: Redis.fromEnv(),
         async getItem(key) {
@@ -44,7 +44,7 @@ Second argument provide your content model (with sample values):
 ```jsx
 import {PhantomCMS} from "phantomcms";
 
-const fc = new PhantomCMS(
+const fc = PhantomCMS(
     provider,
     {
         'sitename:homepage': {
@@ -66,13 +66,14 @@ const fc = new PhantomCMS(
 Then in your react page call hook:
 
 ```jsx
+"use client"; // if nextjs
 export default function Home() {
-    const [data, editable, setEditable] = fc.useFantomEdit('sitename:homepage', true);
+    const [data, editable, setEditable] = fc.useFantomEdit('sitename:homepage', true, false);
     return (
         <>
             <h1>{data.header}</h1>
             <nav>
-                {data.navbar.map(i=><a>{i}</a>)}
+                {data.navbar.map((i,j)=><a key={j}>{i}</a>)}
             </nav>
             <div>
                 <h2>{data.cta.header}</h2>
@@ -88,7 +89,50 @@ export default function Home() {
 
 "data" is object of your provided content model, "editable" - boolean value to indicate edit is enabled (default: false, can be set as second param), "setEditable" - function to enable or disable edit mode
 
-When enable you can edit any connected text on page by clicking on it. Recommend to use in development to provide copywriter ability to edit content in it native visual environment.
+third param - indicates ability to edit images:
+
+```jsx
+import {PhantomCMS,PhantomImage} from "phantomcms";
+
+const fc = new PhantomCMS(
+    provider,
+    {
+        'sitename:homepage': {
+            image: '/images/hero.png',
+            image2: 'https://images.com/hero.png',
+            ...
+        }
+    }
+);
+
+export default function Home() {
+    const [data, editable, setEditable] = fc.useFantomEdit('sitename:homepage', false, true);
+    return (
+        <>
+            ...
+            <PhantomImage src={data.image} style={{borderRadius:"100%"}} className="h-32" alt="pic"/>
+            ...
+        </>
+    )
+}
+```
+
+You also can use PhantomImage without image editing enabled.
+To handle this, editing of raw url or image path not available.
+For example:
+
+```jsx
+... 
+url: 'https://example.com' // plain text, not editor component
+path: '/images/header.png' // plain text | image editing component if enabled
+text: 'You can find it here: https://example.com' // editable
+```
+
+When enabled editing you can edit any connected text (or image) on page by clicking on it.
+
+Commit to storage runs on edit disable (!).
+
+Recommend to use in development to provide copywriter ability to edit content in it native visual environment.
 
 In production, you can use direct access to content by:
 
