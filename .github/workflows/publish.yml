@@ -14,7 +14,7 @@ jobs:
                   node-version: 20
                   registry-url: https://registry.npmjs.org
             - name: install
-              run: npm i 
+              run: npm ci 
               working-directory: phantomcms
             - name: build
               run: npm run build
